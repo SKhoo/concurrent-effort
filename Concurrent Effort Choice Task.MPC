@@ -18,25 +18,25 @@
 
 \**CONTROL CONSTANTS**
 
-^SessionLength = 90		\Session length in minutes
-^RewardDeliveryTime = 200	\[ms]
-^MaximumRewards = 0		\Maximum rewards, set to 0 for no maximum
-^TimebinSize = 1		\Timebin size in minutes
-^IRTbinSize = 5			\IRT bin size in seconds
-^LeftLeverMode = 1		\Set to 0 for inactive, 1 for Fixed Ratio, 2 for Progressive Ratio, 3 for Fixed Holding Duration, 4 for Progressive Holding Duration, 10 for not extended
-^RightLeverMode = 1		\Set to 0 for inactive, 1 for Fixed Ratio, 2 for Progressive Ratio, 3 for Fixed Holding Duration, 4 for Progressive Holding Duration, 10 for not extended
+^SessionLength = 90        \Session length in minutes
+^RewardDeliveryTime = 200    \[ms]
+^MaximumRewards = 0        \Maximum rewards, set to 0 for no maximum
+^TimebinSize = 1        \Timebin size in minutes
+^IRTbinSize = 5            \IRT bin size in seconds
+^LeftLeverMode = 1        \Set to 0 for inactive, 1 for Fixed Ratio, 2 for Progressive Ratio, 3 for Fixed Holding Duration, 4 for Progressive Holding Duration, 10 for not extended
+^RightLeverMode = 1        \Set to 0 for inactive, 1 for Fixed Ratio, 2 for Progressive Ratio, 3 for Fixed Holding Duration, 4 for Progressive Holding Duration, 10 for not extended
 ^FixedRatio = 3
 ^FixedHold = 2
-^RatioDeadline = 10		\Interval [min] between presses that ends protocol
-^Version = 300			\Program version number
+^RatioDeadline = 10        \Interval [min] between presses that ends protocol
+^Version = 300            \Program version number
 
 \**INPUTS**
 
-^LeftLeverDiscrete = 1
-^LeftLeverContinuous = 1
-^RightLeverDiscrete = 2
-^RightLeverContinuous = 2
-^Magazine = 3
+^LeftLeverDiscrete = 7 \ 1 NMR 20220525
+^LeftLeverContinuous = 7 \ 1 NMR 20220525
+^RightLeverDiscrete = 8 \ 2 NMR 20220525
+^RightLeverContinuous = 8 \ 2 NMR 20220525
+^Magazine = 6
 
 \**OUTPUTS**
 
@@ -85,29 +85,29 @@ var_alias Weight = A(23)
 
 \VARIABLES - DATA - Timecourse Arrays
 
-DIM B = 50000		\Left Lever,			subscript S/X(6)
-DIM C = 50000		\Right Lever,			subscript S/X(7)
-DIM D = 50000		\Left Lever Durations,		subscript S/X(8)
-DIM E = 50000		\Right Lever Durations,		subscript S/X(9)
-DIM F = 50000		\Earned Rewards,        	subscript S/X(10)
-DIM G = 50000		\PR value met,          	subscript S/X(11)
-DIM H = 50000		\Magazine Entries       	subscript S/X(12)
+DIM B = 50000        \Left Lever,            subscript S/X(6)
+DIM C = 50000        \Right Lever,            subscript S/X(7)
+DIM D = 50000        \Left Lever Durations,        subscript S/X(8)
+DIM E = 50000        \Right Lever Durations,        subscript S/X(9)
+DIM F = 50000        \Earned Rewards,            subscript S/X(10)
+DIM G = 50000        \PR value met,              subscript S/X(11)
+DIM H = 50000        \Magazine Entries           subscript S/X(12)
 
 \VARIABLES - DATA - Lever IRTs
 
-DIM I = 50000		\Left Lever IRTs,     		subscript S/X(13)
-DIM J = 10000		\Left Lever IRT bins, 		subscript S/X(14)
+DIM I = 50000        \Left Lever IRTs,             subscript S/X(13)
+DIM J = 10000        \Left Lever IRT bins,         subscript S/X(14)
 
-DIM K = 50000		\Right Lever IRTs,		subscript S/X(15)
-DIM L = 10000		\Right Lever IRT Bins,		subscript S/X(16)
+DIM K = 50000        \Right Lever IRTs,        subscript S/X(15)
+DIM L = 10000        \Right Lever IRT Bins,        subscript S/X(16)
 
 \VARIABLES - DATA - Timebin Arrays
-DIM M = 10000		\Left Lever,			subscript T
-DIM N = 10000		\Right Lever,			subscript T
-DIM O = 10000		\Left Lever Durations,		subscript T
-DIM P = 10000		\Right Lever Durations,		subscript T
-DIM Q = 10000		\Earned Rewards,		subscript T
-DIM R = 10000		\Magazine Entries,		subscript T
+DIM M = 10000        \Left Lever,            subscript T
+DIM N = 10000        \Right Lever,            subscript T
+DIM O = 10000        \Left Lever Durations,        subscript T
+DIM P = 10000        \Right Lever Durations,        subscript T
+DIM Q = 10000        \Earned Rewards,        subscript T
+DIM R = 10000        \Magazine Entries,        subscript T
 
 \VARIABLES - CONTROL - WORKING VARIABLES
 
@@ -150,31 +150,31 @@ DIM X = 36
 \THE PROGRESSIVE RATIO/HOLD DURATION SUBSCRIPTS WILL BE: W (Left Lever) and Y (Right Lever)
 \*** To use the function from the citation below... ***
 \Function: Round[5e^(reinforcer number * 0.2) - 5]
-\Reference: Richardson, N. R., & Roberts, D. C. S. (1996). Progressive ratio schedules in drug self-administration 
-\studies in rats: a method to evaluate reinforcing efficacy. Journal of Neuroscience Methods, 66(1), 1-11. 
+\Reference: Richardson, N. R., & Roberts, D. C. S. (1996). Progressive ratio schedules in drug self-administration
+\studies in rats: a method to evaluate reinforcing efficacy. Journal of Neuroscience Methods, 66(1), 1-11.
 \doi: 10.1016/0165-0270(95)00153-0
 \*** Use the list as shown here ***
-\***\LIST U = 1, 2, 4, 6, 9, 12, 15, 20, 25, 32, 40, 50, 62, 77, 95, 118, 
-\***\145, 178, 219, 268, 328, 402, 492, 603, 737, 901, 1102, 1347, 1646, 
-\***\2012, 2459, 3004, 3670, 4484, 5478, 6692, 8175, 9986, 12198, 14900, 
+\***\LIST U = 1, 2, 4, 6, 9, 12, 15, 20, 25, 32, 40, 50, 62, 77, 95, 118,
+\***\145, 178, 219, 268, 328, 402, 492, 603, 737, 901, 1102, 1347, 1646,
+\***\2012, 2459, 3004, 3670, 4484, 5478, 6692, 8175, 9986, 12198, 14900,
 \***\18200, 22230, 27153, 33166, 40510, 49481, 60437, 73819, 90164, 110127
 \*** Otherwise, enter custom variables in the list below ***
 
-LIST U = 1, 2, 4, 6, 9, 12, 15, 20, 25, 32, 40, 50, 62, 77, 95, 118, 
-145, 178, 219, 268, 328, 402, 492, 603, 737, 901, 1102, 1347, 1646, 
-2012, 2459, 3004, 3670, 4484, 5478, 6692, 8175, 9986, 12198, 14900, 
+LIST U = 1, 2, 4, 6, 9, 12, 15, 20, 25, 32, 40, 50, 62, 77, 95, 118,
+145, 178, 219, 268, 328, 402, 492, 603, 737, 901, 1102, 1347, 1646,
+2012, 2459, 3004, 3670, 4484, 5478, 6692, 8175, 9986, 12198, 14900,
 18200, 22230, 27153, 33166, 40510, 49481, 60437, 73819, 90164, 110127
 
 \VARIABLES - CONTROL - PROGRESSIVE HOLD DURATION LIST
 \ Each duration here will be a hold duration in seconds, used in order.
-LIST V = 1, 1, 1, 5, 5, 5, 10, 10, 10, 15, 15, 15, 20, 20, 20, 25, 25, 25, 
+LIST V = 1, 1, 1, 5, 5, 5, 10, 10, 10, 15, 15, 15, 20, 20, 20, 25, 25, 25,
 30, 30, 30, 35, 35, 35, 40, 40, 40, 45, 45, 45, 50, 50, 50, 55, 55, 55, 60, 60, 60,
 65, 65, 65, 70, 70, 70, 75, 75, 75, 80, 80, 80, 85, 85, 85, 90, 90, 90,
 95, 95, 95, 100, 100, 100, 105, 105, 105, 110, 110, 110, 115, 115, 115,
 120, 120, 120, 125, 125, 125, 130, 130, 130, 135, 135, 135, 140, 140, 140,
 145, 145, 145, 150, 150, 150, 155, 155, 155, 160, 160, 160, 165, 165, 165,
 170, 170, 170, 175, 175, 175, 180, 180, 180, 185, 185, 185, 190, 190, 190,
-195, 195, 195, 200, 200, 200, 205, 205, 205, 210, 210, 210, 215, 215, 215 
+195, 195, 195, 200, 200, 200, 205, 205, 205, 210, 210, 210, 215, 215, 215
 
 \VARIABLES - CONTROL - SESSION PARAMETERS
 
@@ -222,26 +222,26 @@ DEFINEMACRO RightLeverPHRecording = {SET A(6) = X(5); SHOW 9, Last PH Right Leve
 S.S.1,
 
 S1,\State 1 shows the program has loaded.
-	0.01": SET Z(10) = ^Version;
-	SHOW 1, Program Version, Z(10);
+    0.01": SET Z(10) = ^Version;
+    SHOW 1, Program Version, Z(10);
 
-	\Set the variables according to the control constants
-	SET Z(0) = ^SessionLength;
-	SET Z(1) = ^RewardDeliveryTime, Z(2) = ^MaximumRewards;
-	SET Z(3) = Z(0) / ^TimebinSize, Z(4) = ^IRTbinSize, Z(5) = ^LeftLeverMode;
-	SET Z(6) = ^RightLeverMode, Z(7) = ^FixedRatio, Z(8) = ^FixedHold;
-	SET Z(9) = ^RatioDeadline;
+    \Set the variables according to the control constants
+    SET Z(0) = ^SessionLength;
+    SET Z(1) = ^RewardDeliveryTime, Z(2) = ^MaximumRewards;
+    SET Z(3) = Z(0) / ^TimebinSize, Z(4) = ^IRTbinSize, Z(5) = ^LeftLeverMode;
+    SET Z(6) = ^RightLeverMode, Z(7) = ^FixedRatio, Z(8) = ^FixedHold;
+    SET Z(9) = ^RatioDeadline;
 
-	\Seal all arrays
-	SET B(1) = -987.987, C(1) = -987.987, D(1) = -987.987;
-	SET E(1) = -987.987, F(1) = -987.987;
-	SET G(1) = -987.987, H(1) = -987.987;				\Timestamp recorders
-	SET I(1) = -987.987, J(0) = -987.987;				\IRT arrays
-	SET K(1) = -987.987, L(0) = -987.987;
-	SET M(1) = -987.987, N(1) = -987.987, O(1) = -987.987;
-	SET Q(1) = -987.987, P(1) = -987.987, R(1) = -987.987;		\Timebin Recorders
+    \Seal all arrays
+    SET B(1) = -987.987, C(1) = -987.987, D(1) = -987.987;
+    SET E(1) = -987.987, F(1) = -987.987;
+    SET G(1) = -987.987, H(1) = -987.987;                \Timestamp recorders
+    SET I(1) = -987.987, J(0) = -987.987;                \IRT arrays
+    SET K(1) = -987.987, L(0) = -987.987;
+    SET M(1) = -987.987, N(1) = -987.987, O(1) = -987.987;
+    SET Q(1) = -987.987, P(1) = -987.987, R(1) = -987.987;        \Timebin Recorders
 
-	SET A(23) = -987.987 ---> S2
+    SET A(23) = -987.987 ---> S2
 
 S2,\State 2 waits for the start command
     #START: SHOW 1, Session Time, X(0);
@@ -252,7 +252,7 @@ S2,\State 2 waits for the start command
     SET STARTMINUTES = CURRENTMINUTES, STARTSECONDS = CURRENTSECONDS;
 
     \Set default latencies
-    SET B(0) = Z(0) * 60, C(0) = Z(0) * 60, F(0) = Z(0) * 60; 
+    SET B(0) = Z(0) * 60, C(0) = Z(0) * 60, F(0) = Z(0) * 60;
     SET G(0) = Z(0) * 60, H(0) = Z(0) * 60;
 
     \Identify and seal the last possible IRT bins for left and right levers
@@ -269,41 +269,41 @@ S3,\State 3 counts the session length in seconds
         SET A(18) = G(0), A(19) = H(0);
         \Calculate the average (arithmetic mean) IRT
         ARITHMETICMEAN A(21) = I, 0, A(0) - 1;
-	ARITHMETICMEAN A(22) = K, 0, A(1) - 1;
+    ARITHMETICMEAN A(22) = K, 0, A(1) - 1;
 
         OFF ^LeftLeverOut, ^RightLeverOut, ^Houselight, ^Fan ---> S4
         @CONTINUE: ---> SX
 
 
-	#Z^Shutdown: SET A(15) = B(0), A(16) = C(0), A(17) = F(0);        \Transfer latency values to the A array
-	SET A(18) = G(0), A(19) = H(0);
-	OFF ^LeftLeverOut, ^RightLeverOut, ^Houselight, ^Fan;
+    #Z^Shutdown: SET A(15) = B(0), A(16) = C(0), A(17) = F(0);        \Transfer latency values to the A array
+    SET A(18) = G(0), A(19) = H(0);
+    OFF ^LeftLeverOut, ^RightLeverOut, ^Houselight, ^Fan;
 
-	\Calculate the average (arithmetic mean) IRT
-	ARITHMETICMEAN A(21) = I, 0, A(0) - 1;
-	ARITHMETICMEAN A(22) = K, 0, A(1) - 1 ---> S4
+    \Calculate the average (arithmetic mean) IRT
+    ARITHMETICMEAN A(21) = I, 0, A(0) - 1;
+    ARITHMETICMEAN A(22) = K, 0, A(1) - 1 ---> S4
 
-S4,	\State 4 runs an algorithm to seal off excess IRT bins
-	0.01": SET S = X(14); IF J(S) = 0 [@SEAL, @STOP]
-		@SEAL: SET J(S) = -987.987; IF X(14) > 1 [@CONTINUE, @END]
-			@CONTINUE: SUB X(14); SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
-				@SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
-					@CONTRIGHT: SUB X(16) ---> SX
-					@ENDRIGHT: ---> SX
-				@STOPRIGHT: ---> SX
-			@END: SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
-				@SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
-					@CONTRIGHT: SUB X(16) ---> SX
-					@ENDRIGHT: ---> S5
-				@STOPRIGHT: ---> S5
-		@STOP: SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
-			@SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
-				@CONTRIGHT: SUB X(16) ---> SX
-				@ENDRIGHT: ---> S5
-			@STOPRIGHT: ---> S5
+S4,    \State 4 runs an algorithm to seal off excess IRT bins
+    0.01": SET S = X(14); IF J(S) = 0 [@SEAL, @STOP]
+        @SEAL: SET J(S) = -987.987; IF X(14) > 1 [@CONTINUE, @END]
+            @CONTINUE: SUB X(14); SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
+                @SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
+                    @CONTRIGHT: SUB X(16) ---> SX
+                    @ENDRIGHT: ---> SX
+                @STOPRIGHT: ---> SX
+            @END: SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
+                @SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
+                    @CONTRIGHT: SUB X(16) ---> SX
+                    @ENDRIGHT: ---> S5
+                @STOPRIGHT: ---> S5
+        @STOP: SET S = X(16); IF L(S) = 0 [@SEALRIGHT, @STOPRIGHT]
+            @SEALRIGHT: SET L(S) = -987.987; IF X(16) > 1 [@CONTRIGHT, @ENDRIGHT]
+                @CONTRIGHT: SUB X(16) ---> SX
+                @ENDRIGHT: ---> S5
+            @STOPRIGHT: ---> S5
 
-S5,	\State 5 saves the data and shuts down the program
-	1": ---> STOPABORTFLUSH
+S5,    \State 5 saves the data and shuts down the program
+    1": ---> STOPABORTFLUSH
 
 
 \*********************************
@@ -311,602 +311,602 @@ S5,	\State 5 saves the data and shuts down the program
 \*********************************
 
 S.S.2,
-S1,	\State 1 waits for the start command
-	#START: ---> S2
+S1,    \State 1 waits for the start command
+    #START: ---> S2
 
-S2,	\State 2 counts upwards in 10 ms increments, including the response timeout clock
-	0.01": SET X(1) = X(1) + 0.01, A(22) = X(1);
-	SET X(2) = X(2) + 0.01, X(36) = X(36) + 0.01;
-	IF ((X(2) + 0.001)/ 60 >= (Z(0) / Z(3))) AND ((T + 1) < Z(3)) [@TRUE, @FALSE]
-		@TRUE: SET X(2) = 0; ADD T; SET A(22) = X(1);
-		SET M(T) = 0, N(T) = 0, O(T) = 0, P(T) = 0, Q(T) = 0, R(T) = 0;
-		SET M(T+1) = -987.987, N(T+1) = -987.987, O(T+1) = -987.987;
-		SET P(T+1) = -987.987, Q(T+1) = -987.987, R(T+1) = -987.987;
-		IF (X(36) >= Z(9) * 60) AND (Z(9) > 0) [@REWARDTIMEOUT, @CONTINUE]
-			@REWARDTIMEOUT: Z^Shutdown ---> S3
-			@CONTINUE: ---> SX
-		@FALSE: IF (X(36) >= Z(9) * 60) AND (Z(9) > 0) [@REWARDTIMEOUT, @CONTINUE]
-			@REWARDTIMEOUT: Z^Shutdown ---> S3
-			@CONTINUE: ---> SX
+S2,    \State 2 counts upwards in 10 ms increments, including the response timeout clock
+    0.01": SET X(1) = X(1) + 0.01, A(22) = X(1);
+    SET X(2) = X(2) + 0.01, X(36) = X(36) + 0.01;
+    IF ((X(2) + 0.001)/ 60 >= (Z(0) / Z(3))) AND ((T + 1) < Z(3)) [@TRUE, @FALSE]
+        @TRUE: SET X(2) = 0; ADD T; SET A(22) = X(1);
+        SET M(T) = 0, N(T) = 0, O(T) = 0, P(T) = 0, Q(T) = 0, R(T) = 0;
+        SET M(T+1) = -987.987, N(T+1) = -987.987, O(T+1) = -987.987;
+        SET P(T+1) = -987.987, Q(T+1) = -987.987, R(T+1) = -987.987;
+        IF (X(36) >= Z(9) * 60) AND (Z(9) > 0) [@REWARDTIMEOUT, @CONTINUE]
+            @REWARDTIMEOUT: Z^Shutdown ---> S3
+            @CONTINUE: ---> SX
+        @FALSE: IF (X(36) >= Z(9) * 60) AND (Z(9) > 0) [@REWARDTIMEOUT, @CONTINUE]
+            @REWARDTIMEOUT: Z^Shutdown ---> S3
+            @CONTINUE: ---> SX
 
-	#Z^Shutdown: SET A(22) = X(1) ---> S3
+    #Z^Shutdown: SET A(22) = X(1) ---> S3
 
-S3,	\State 3 is a holding state
-	#START: ---> SX
+S3,    \State 3 is a holding state
+    #START: ---> SX
 
 \**************************
 \State Set 3 - Left Lever
 \**************************
 
 S.S.3, \State Set 3 will handle the left lever
-S1,	\State 1 waits for the start command
-	#START: IF Z(5) < 0.1 [@INACTIVE, @CHECKONE]
-		@INACTIVE: SHOW 2, Left Lever Inactive, A(0) ---> S2
-		@CHECKONE: IF Z(5) < 1.1 [@FR, @CHECKTWO]
-			@FR: SHOW 2, Left Lever FR, A(0); SET X(4) = Z(7) ---> S5
-			@CHECKTWO: IF Z(5) < 2.1 [@PR, @CHECKTHREE]
-				@PR: SHOW 2, Left Lever PR, A(0); LIST X(4) = U(W) ---> S10
-				@CHECKTHREE: IF Z(5) < 3.1 [@FIXHOLD, @CHECKFOUR]
-					@FIXHOLD: SHOW 2, Left Lever FH, A(0); SET X(4) = Z(8) ---> S15
-					@CHECKFOUR: IF Z(5) < 4.1 [@PROGHOLD, @DONOTEXTEND]
-						@PROGHOLD: SHOW 2, Left Lever PH, A(0); LIST X(4) = V(W) ---> S20
-						@DONOTEXTEND: SHOW 2, Left Lever Off, A(0) ---> S25
+S1,    \State 1 waits for the start command
+    #START: IF Z(5) < 0.1 [@INACTIVE, @CHECKONE]
+        @INACTIVE: SHOW 2, Left Lever Inactive, A(0) ---> S2
+        @CHECKONE: IF Z(5) < 1.1 [@FR, @CHECKTWO]
+            @FR: SHOW 2, Left Lever FR, A(0); SET X(4) = Z(7) ---> S5
+            @CHECKTWO: IF Z(5) < 2.1 [@PR, @CHECKTHREE]
+                @PR: SHOW 2, Left Lever PR, A(0); LIST X(4) = U(W) ---> S10
+                @CHECKTHREE: IF Z(5) < 3.1 [@FIXHOLD, @CHECKFOUR]
+                    @FIXHOLD: SHOW 2, Left Lever FH, A(0); SET X(4) = Z(8) ---> S15
+                    @CHECKFOUR: IF Z(5) < 4.1 [@PROGHOLD, @DONOTEXTEND]
+                        @PROGHOLD: SHOW 2, Left Lever PH, A(0); LIST X(4) = V(W) ---> S20
+                        @DONOTEXTEND: SHOW 2, Left Lever Off, A(0) ---> S25
 \============
-S2,	\INACTIVE Left Lever Recording (First response)
-	#R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever Inactive, A(0) ---> S4
+S2,    \INACTIVE Left Lever Recording (First response)
+    #R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever Inactive, A(0) ---> S4
 
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S3,	\INACTIVE Left Lever Recording
-	#R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever Inactive, A(0) ---> S4
+S3,    \INACTIVE Left Lever Recording
+    #R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever Inactive, A(0) ---> S4
 
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S4,	\INACTIVE Left Lever Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+S4,    \INACTIVE Left Lever Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
 
-	0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S3
-		@ACCEPT: %LeftLeverDuration% ---> S3
+    0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S3
+        @ACCEPT: %LeftLeverDuration% ---> S3
 
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
-
-\============
-S5,	\FIXED RATIO Left Lever Recording (First Response)
-	#R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FR, A(0);
-	IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward% ---> S7
-		@NULL: ---> S7
-
-	#Z^Reward: ---> S8
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S6,	\FIXED RATIO Left Lever Recording
-	#R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FR, A(0);
-	IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward% ---> S7
-		@NULL: ---> S7
-
-	#Z^Reward: ---> S8
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S7,	\FIXED RATIO Left Lever Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
-
-	0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
-
-S8,	\FIXED RATIO Left Lever Timeout/Perseverative Recording
-	#R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FR, A(0), 7, Perseverative Left Lever, A(10) ---> S9
-		@FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FR, A(0), 7, Perseverative Left Lever, A(10) ---> S9
-
-	#Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S6
-		@FIRST: ---> S5
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S9,	\FIXED RATIO Left Lever Timeout/Perseverative Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
-
-	0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001, A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-		@ACCEPT: SET A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
 
 \============
-S10,	\PROGRESSIVE RATIO Left Lever Recording (First Response)
-	#R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PR, A(0);
-	IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward%; %LeftLeverPRRecording% ---> S12
-		@NULL: ---> S12
+S5,    \FIXED RATIO Left Lever Recording (First Response)
+    #R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FR, A(0);
+    IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward% ---> S7
+        @NULL: ---> S7
 
-	#Z^Reward: ---> S13
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^Reward: ---> S8
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S11,	\PROGRESSIVE RATIO Left Lever Recording
-	#R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PR, A(0);
-	IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward%; %LeftLeverPRRecording% ---> S12
-		@NULL: ---> S12
+S6,    \FIXED RATIO Left Lever Recording
+    #R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FR, A(0);
+    IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward% ---> S7
+        @NULL: ---> S7
 
-	#Z^Reward: ---> S13
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^Reward: ---> S8
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S12,	\PROGRESSIVE RATIO Left Lever Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+S7,    \FIXED RATIO Left Lever Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
 
-	0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
+    0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
 
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
 
-S13,	\PROGRESSIVE RATIO Left Lever Timeout/Perseverative Recording
-	#R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PR, A(0), 7, Perseverative Left Lever, A(10) ---> S14
-		@FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PR, A(0), 7, Perseverative Left Lever, A(10) ---> S14
+S8,    \FIXED RATIO Left Lever Timeout/Perseverative Recording
+    #R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FR, A(0), 7, Perseverative Left Lever, A(10) ---> S9
+        @FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FR, A(0), 7, Perseverative Left Lever, A(10) ---> S9
 
-	#Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S11
-		@FIRST: ---> S10
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S6
+        @FIRST: ---> S5
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S14,	\PROGRESSIVE RATIO Left Lever Timeout/Perseverative Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+S9,    \FIXED RATIO Left Lever Timeout/Perseverative Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
 
-	0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001, A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
-		@ACCEPT: SET A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
+    0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001, A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
+        @ACCEPT: SET A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
 
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
-
-\============
-S15,	\FIXED HOLDING TIME Left Lever Recording (First Response)
-	#R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FH, A(0) ---> S17
-
-	#Z^Reward: ---> S18
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S16,	\FIXED HOLDING TIME Left Lever Recording
-	#R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FH, A(0) ---> S17
-
-	#Z^Reward: ---> S18
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S17,	\FIXED HOLDING TIME Left Lever Duration
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01; IF (X(27) >= X(4)) AND (X(30) < 0.5) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward%; SET X(30) = 1 ---> SX 
-		@NULL: ---> SX
-
-	0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
-	
-S18,	\FIXED HOLDING TIME Left Lever Timeout/Perseverative Recording
-	#R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FH, A(0), 7, Perseverative Left Lever, A(10) ---> S19
-		@FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FH, A(0), 7, Perseverative Left Lever, A(10) ---> S19
-
-	#Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S16
-		@FIRST: ---> S15
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
-
-S19,	\FIXED HOLDING TIME Left Lever Timeout/Perseverative Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
-
-	0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
 
 \============
-S20,	\PROGRESSIVE HOLDING TIME Left Lever Recording (First Response)
-	#R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PH, A(0) ---> S22
+S10,    \PROGRESSIVE RATIO Left Lever Recording (First Response)
+    #R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PR, A(0);
+    IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward%; %LeftLeverPRRecording% ---> S12
+        @NULL: ---> S12
 
-	#Z^Reward: ---> S23
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+    #Z^Reward: ---> S13
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-S21,	\PROGRESSIVE HOLDING TIME Left Lever Recording
-	#R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PH, A(0) ---> S22
+S11,    \PROGRESSIVE RATIO Left Lever Recording
+    #R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PR, A(0);
+    IF (X(19) >= X(4)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward%; %LeftLeverPRRecording% ---> S12
+        @NULL: ---> S12
 
+    #Z^Reward: ---> S13
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-	#Z^Reward: ---> S23
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+S12,    \PROGRESSIVE RATIO Left Lever Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
 
-S22,	\PROGRESSIVE HOLDING TIME Left Lever Duration
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01; IF (X(27) >= X(4)) AND (X(30) < 0.5) [@REWARD, @NULL]
-		@REWARD: %LeftLeverReward%; %LeftLeverPHRecording%; SET X(30) = 1 ---> SX 
-		@NULL: ---> SX
+    0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
 
-	0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
 
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
+S13,    \PROGRESSIVE RATIO Left Lever Timeout/Perseverative Recording
+    #R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PR, A(0), 7, Perseverative Left Lever, A(10) ---> S14
+        @FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PR, A(0), 7, Perseverative Left Lever, A(10) ---> S14
 
-S23,	\PROGRESSIVE HOLDING TIME Left Lever Timeout/Perseverative Recording
-	#R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PH, A(0), 7, Perseverative Left Lever, A(10) ---> S24
-		@FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PH, A(0), 7, Perseverative Left Lever, A(10) ---> S24
+    #Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S11
+        @FIRST: ---> S10
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
 
-	#Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S21
-		@FIRST: ---> S20
-	#Z^Shutdown: OFF ^LeftLeverOut ---> S25
+S14,    \PROGRESSIVE RATIO Left Lever Timeout/Perseverative Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
 
-S24,	\PROGRESSIVE HOLDING TIME Left Lever Timeout/Perseverative Duration Recording
-	#R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+    0.01": IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001, A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
+        @ACCEPT: SET A(11) = A(11) + X(27); %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
 
-	0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-		@ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-
-	#Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
-		@ACCEPT: %LeftLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
 
 \============
-S25,	\Holding state, no left lever extension
-	#START: ---> SX
+S15,    \FIXED HOLDING TIME Left Lever Recording (First Response)
+    #R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FH, A(0) ---> S17
+
+    #Z^Reward: ---> S18
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S16,    \FIXED HOLDING TIME Left Lever Recording
+    #R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FH, A(0) ---> S17
+
+    #Z^Reward: ---> S18
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S17,    \FIXED HOLDING TIME Left Lever Duration
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01; IF (X(27) >= X(4)) AND (X(30) < 0.5) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward%; SET X(30) = 1 ---> SX
+        @NULL: ---> SX
+
+    0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
+
+S18,    \FIXED HOLDING TIME Left Lever Timeout/Perseverative Recording
+    #R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever FH, A(0), 7, Perseverative Left Lever, A(10) ---> S19
+        @FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever FH, A(0), 7, Perseverative Left Lever, A(10) ---> S19
+
+    #Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S16
+        @FIRST: ---> S15
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S19,    \FIXED HOLDING TIME Left Lever Timeout/Perseverative Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+
+    0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
+
+\============
+S20,    \PROGRESSIVE HOLDING TIME Left Lever Recording (First Response)
+    #R^LeftLeverDiscrete: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PH, A(0) ---> S22
+
+    #Z^Reward: ---> S23
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S21,    \PROGRESSIVE HOLDING TIME Left Lever Recording
+    #R^LeftLeverDiscrete: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PH, A(0) ---> S22
+
+
+    #Z^Reward: ---> S23
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S22,    \PROGRESSIVE HOLDING TIME Left Lever Duration
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01; IF (X(27) >= X(4)) AND (X(30) < 0.5) [@REWARD, @NULL]
+        @REWARD: %LeftLeverReward%; %LeftLeverPHRecording%; SET X(30) = 1 ---> SX
+        @NULL: ---> SX
+
+    0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
+
+S23,    \PROGRESSIVE HOLDING TIME Left Lever Timeout/Perseverative Recording
+    #R^LeftLeverDiscrete: ADD A(10); IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordLeftLever%; %IRTLeftLever%; SHOW 2, Left Lever PH, A(0), 7, Perseverative Left Lever, A(10) ---> S24
+        @FIRST: %FirstLeftLever%; %FirstIRTLeftLever%; SHOW 2, Left Lever PH, A(0), 7, Perseverative Left Lever, A(10) ---> S24
+
+    #Z^EndTimeout: IF A(0) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S21
+        @FIRST: ---> S20
+    #Z^Shutdown: OFF ^LeftLeverOut ---> S25
+
+S24,    \PROGRESSIVE HOLDING TIME Left Lever Timeout/Perseverative Duration Recording
+    #R^LeftLeverContinuous: SET X(27) = X(27) + 0.01 ---> SX
+
+    0.01": SET X(30) = 0; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+        @ACCEPT: %LeftLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+
+    #Z^Shutdown: OFF ^LeftLeverOut; IF X(27) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(27) = 0.001; %LeftLeverDuration% ---> S25
+        @ACCEPT: %LeftLeverDuration% ---> S25
+
+\============
+S25,    \Holding state, no left lever extension
+    #START: ---> SX
 
 \**************************
 \State Set 4 - Right Lever
 \**************************
 
 S.S.4, \State Set 4 will handle the right lever
-S1,	\State 1 waits for the start command
-	#START: IF Z(6) < 0.1 [@INACTIVE, @CHECKONE]
-		@INACTIVE: SHOW 3, Right Lever Inactive, A(1) ---> S2
-		@CHECKONE: IF Z(6) < 1.1 [@FR, @CHECKTWO]
-			@FR: SHOW 3, Right Lever FR, A(1); SET X(5) = Z(7) ---> S5
-			@CHECKTWO: IF Z(6) < 2.1 [@PR, @CHECKTHREE]
-				@PR: SHOW 3, Right Lever PR, A(1); LIST X(5) = U(Y) ---> S10
-				@CHECKTHREE: IF Z(6) < 3.1 [@FIXHOLD, @CHECKFOUR]
-					@FIXHOLD: SHOW 3, Right Lever FH, A(1); SET X(4) = Z(8) ---> S15
-					@CHECKFOUR: IF Z(6) < 4.1 [@PROGHOLD, @DONOTEXTEND]
-						@PROGHOLD: SHOW 3, Right Lever PH, A(1); LIST X(5) = V(Y) ---> S20
-						@DONOTEXTEND: SHOW 3, Right Lever Off, A(1) ---> S25
+S1,    \State 1 waits for the start command
+    #START: IF Z(6) < 0.1 [@INACTIVE, @CHECKONE]
+        @INACTIVE: SHOW 3, Right Lever Inactive, A(1) ---> S2
+        @CHECKONE: IF Z(6) < 1.1 [@FR, @CHECKTWO]
+            @FR: SHOW 3, Right Lever FR, A(1); SET X(5) = Z(7) ---> S5
+            @CHECKTWO: IF Z(6) < 2.1 [@PR, @CHECKTHREE]
+                @PR: SHOW 3, Right Lever PR, A(1); LIST X(5) = U(Y) ---> S10
+                @CHECKTHREE: IF Z(6) < 3.1 [@FIXHOLD, @CHECKFOUR]
+                    @FIXHOLD: SHOW 3, Right Lever FH, A(1); SET X(4) = Z(8) ---> S15
+                    @CHECKFOUR: IF Z(6) < 4.1 [@PROGHOLD, @DONOTEXTEND]
+                        @PROGHOLD: SHOW 3, Right Lever PH, A(1); LIST X(5) = V(Y) ---> S20
+                        @DONOTEXTEND: SHOW 3, Right Lever Off, A(1) ---> S25
 \============
-S2,	\INACTIVE Right Lever Recording (First response)
-	#R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever Inactive, A(1) ---> S4
+S2,    \INACTIVE Right Lever Recording (First response)
+    #R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever Inactive, A(1) ---> S4
 
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S3,	\INACTIVE Right Lever Recording
-	#R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever Inactive, A(1) ---> S4
+S3,    \INACTIVE Right Lever Recording
+    #R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever Inactive, A(1) ---> S4
 
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S4,	\INACTIVE Right Lever Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+S4,    \INACTIVE Right Lever Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
 
-	0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S3
-		@ACCEPT: %RightLeverDuration% ---> S3
+    0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S3
+        @ACCEPT: %RightLeverDuration% ---> S3
 
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
-
-\============
-S5,	\FIXED RATIO Right Lever Recording (First Response)
-	#R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FR, A(1);
-	IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward% ---> S7
-		@NULL: ---> S7
-
-	#Z^Reward: ---> S8
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S6,	\FIXED RATIO Right Lever Recording
-	#R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FR, A(1);
-	IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward% ---> S7
-		@NULL: ---> S7
-
-	#Z^Reward: ---> S8
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S7,	\FIXED RATIO Right Lever Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
-
-	0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
-
-S8,	\FIXED RATIO Right Lever Timeout/Perseverative Recording
-	#R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FR, A(1), 8, Perseverative Right Lever, A(12) ---> S9
-		@FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FR, A(1), 8, Perseverative Right Lever, A(12) ---> S9
-
-	#Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S6
-		@FIRST: ---> S5
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S9,	\FIXED RATIO Right Lever Timeout/Perseverative Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
-
-	0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001, A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-		@ACCEPT: SET A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S8
-			@NULL: ---> S6
-
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
 
 \============
-S10,	\PROGRESSIVE RATIO Right Lever Recording (First Response)
-	#R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PR, A(1);
-	IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward%; %RightLeverPRRecording% ---> S12
-		@NULL: ---> S12
+S5,    \FIXED RATIO Right Lever Recording (First Response)
+    #R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FR, A(1);
+    IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward% ---> S7
+        @NULL: ---> S7
 
-	#Z^Reward: ---> S13
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^Reward: ---> S8
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S11,	\PROGRESSIVE RATIO Right Lever Recording
-	#R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PR, A(1);
-	IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward%; %RightLeverPRRecording% ---> S12
-		@NULL: ---> S12
+S6,    \FIXED RATIO Right Lever Recording
+    #R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FR, A(1);
+    IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward% ---> S7
+        @NULL: ---> S7
 
-	#Z^Reward: ---> S13
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^Reward: ---> S8
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S12,	\PROGRESSIVE RATIO Right Lever Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+S7,    \FIXED RATIO Right Lever Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
 
-	0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
+    0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
 
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
 
-S13,	\PROGRESSIVE RATIO Right Lever Timeout/Perseverative Recording
-	#R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PR, A(1), 8, Perseverative Right Lever, A(12) ---> S14
-		@FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PR, A(1), 8, Perseverative Right Lever, A(12) ---> S14
+S8,    \FIXED RATIO Right Lever Timeout/Perseverative Recording
+    #R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FR, A(1), 8, Perseverative Right Lever, A(12) ---> S9
+        @FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FR, A(1), 8, Perseverative Right Lever, A(12) ---> S9
 
-	#Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S11
-		@FIRST: ---> S10
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S6
+        @FIRST: ---> S5
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S14,	\PROGRESSIVE RATIO Right Lever Timeout/Perseverative Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+S9,    \FIXED RATIO Right Lever Timeout/Perseverative Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
 
-	0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001, A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
-		@ACCEPT: SET A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S13
-			@NULL: ---> S11
+    0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001, A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
+        @ACCEPT: SET A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S8
+            @NULL: ---> S6
 
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
-
-\============
-S15,	\FIXED HOLDING TIME Right Lever Recording (First Response)
-	#R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FH, A(1) ---> S17
-
-	#Z^Reward: ---> S18
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S16,	\FIXED HOLDING TIME Right Lever Recording
-	#R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FH, A(1) ---> S17
-
-	#Z^Reward: ---> S18
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S17,	\FIXED HOLDING TIME Right Lever Duration
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01; IF (X(28) >= X(5)) AND (X(31) < 0.5) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward%; SET X(31) = 1 ---> SX 
-		@NULL: ---> SX
-
-	0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
-	
-S18,	\FIXED HOLDING TIME Right Lever Timeout/Perseverative Recording
-	#R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FH, A(1), 8, Perseverative Right Lever, A(12) ---> S19
-		@FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FH, A(1), 8, Perseverative Right Lever, A(12) ---> S19
-
-	#Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S16
-		@FIRST: ---> S15
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
-
-S19,	\FIXED HOLDING TIME Right Lever Timeout/Perseverative Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
-
-	0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S18
-			@NULL: ---> S16
-
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
 
 \============
-S20,	\PROGRESSIVE HOLDING TIME Right Lever Recording (First Response)
-	#R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PH, A(1) ---> S22
+S10,    \PROGRESSIVE RATIO Right Lever Recording (First Response)
+    #R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PR, A(1);
+    IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward%; %RightLeverPRRecording% ---> S12
+        @NULL: ---> S12
 
-	#Z^Reward: ---> S23
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+    #Z^Reward: ---> S13
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-S21,	\PROGRESSIVE HOLDING TIME Right Lever Recording
-	#R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PH, A(1) ---> S22
+S11,    \PROGRESSIVE RATIO Right Lever Recording
+    #R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PR, A(1);
+    IF (X(20) >= X(5)) AND ((A(2) < Z(2)) OR (Z(2) < 1)) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward%; %RightLeverPRRecording% ---> S12
+        @NULL: ---> S12
 
+    #Z^Reward: ---> S13
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-	#Z^Reward: ---> S23
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+S12,    \PROGRESSIVE RATIO Right Lever Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
 
-S22,	\PROGRESSIVE HOLDING TIME Right Lever Duration
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01; IF (X(28) >= X(5)) AND (X(31) < 0.5) [@REWARD, @NULL]
-		@REWARD: %RightLeverReward%; %RightLeverPHRecording%; SET X(31) = 1 ---> SX 
-		@NULL: ---> SX
+    0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
 
-	0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
 
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
+S13,    \PROGRESSIVE RATIO Right Lever Timeout/Perseverative Recording
+    #R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PR, A(1), 8, Perseverative Right Lever, A(12) ---> S14
+        @FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PR, A(1), 8, Perseverative Right Lever, A(12) ---> S14
 
-S23,	\PROGRESSIVE HOLDING TIME Right Lever Timeout/Perseverative Recording
-	#R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PH, A(1), 8, Perseverative Right Lever, A(12) ---> S24
-		@FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PH, A(1), 8, Perseverative Right Lever, A(12) ---> S24
+    #Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S11
+        @FIRST: ---> S10
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
 
-	#Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
-		@NOTFIRST: ---> S21
-		@FIRST: ---> S20
-	#Z^Shutdown: OFF ^RightLeverOut ---> S25
+S14,    \PROGRESSIVE RATIO Right Lever Timeout/Perseverative Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
 
-S24,	\PROGRESSIVE HOLDING TIME Right Lever Timeout/Perseverative Duration Recording
-	#R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+    0.01": IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001, A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
+        @ACCEPT: SET A(13) = A(13) + X(28); %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S13
+            @NULL: ---> S11
 
-	0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-		@ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
-			@TIMEOUT: ---> S23
-			@NULL: ---> S21
-
-	#Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
-		@MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
-		@ACCEPT: %RightLeverDuration% ---> S25
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
 
 \============
-S25,	\Holding state, no right lever extension
-	#START: ---> SX
+S15,    \FIXED HOLDING TIME Right Lever Recording (First Response)
+    #R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FH, A(1) ---> S17
+
+    #Z^Reward: ---> S18
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S16,    \FIXED HOLDING TIME Right Lever Recording
+    #R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FH, A(1) ---> S17
+
+    #Z^Reward: ---> S18
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S17,    \FIXED HOLDING TIME Right Lever Duration
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01; IF (X(28) >= X(5)) AND (X(31) < 0.5) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward%; SET X(31) = 1 ---> SX
+        @NULL: ---> SX
+
+    0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
+
+S18,    \FIXED HOLDING TIME Right Lever Timeout/Perseverative Recording
+    #R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever FH, A(1), 8, Perseverative Right Lever, A(12) ---> S19
+        @FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever FH, A(1), 8, Perseverative Right Lever, A(12) ---> S19
+
+    #Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S16
+        @FIRST: ---> S15
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S19,    \FIXED HOLDING TIME Right Lever Timeout/Perseverative Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+
+    0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S18
+            @NULL: ---> S16
+
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
+
+\============
+S20,    \PROGRESSIVE HOLDING TIME Right Lever Recording (First Response)
+    #R^RightLeverDiscrete: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PH, A(1) ---> S22
+
+    #Z^Reward: ---> S23
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S21,    \PROGRESSIVE HOLDING TIME Right Lever Recording
+    #R^RightLeverDiscrete: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PH, A(1) ---> S22
+
+
+    #Z^Reward: ---> S23
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S22,    \PROGRESSIVE HOLDING TIME Right Lever Duration
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01; IF (X(28) >= X(5)) AND (X(31) < 0.5) [@REWARD, @NULL]
+        @REWARD: %RightLeverReward%; %RightLeverPHRecording%; SET X(31) = 1 ---> SX
+        @NULL: ---> SX
+
+    0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
+
+S23,    \PROGRESSIVE HOLDING TIME Right Lever Timeout/Perseverative Recording
+    #R^RightLeverDiscrete: ADD A(12); IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: %RecordRightLever%; %IRTRightLever%; SHOW 3, Right Lever PH, A(1), 8, Perseverative Right Lever, A(12) ---> S24
+        @FIRST: %FirstRightLever%; %FirstIRTRightLever%; SHOW 3, Right Lever PH, A(1), 8, Perseverative Right Lever, A(12) ---> S24
+
+    #Z^EndTimeout: IF A(1) > 0 [@NOTFIRST, @FIRST]
+        @NOTFIRST: ---> S21
+        @FIRST: ---> S20
+    #Z^Shutdown: OFF ^RightLeverOut ---> S25
+
+S24,    \PROGRESSIVE HOLDING TIME Right Lever Timeout/Perseverative Duration Recording
+    #R^RightLeverContinuous: SET X(28) = X(28) + 0.01 ---> SX
+
+    0.01": SET X(31) = 0; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+        @ACCEPT: %RightLeverDuration%; IF X(29) > 0.5 [@TIMEOUT, @NULL]
+            @TIMEOUT: ---> S23
+            @NULL: ---> S21
+
+    #Z^Shutdown: OFF ^RightLeverOut; IF X(28) < 0.01 [@MINDURATION, @ACCEPT]
+        @MINDURATION: SET X(28) = 0.001; %RightLeverDuration% ---> S25
+        @ACCEPT: %RightLeverDuration% ---> S25
+
+\============
+S25,    \Holding state, no right lever extension
+    #START: ---> SX
 
 \******************************
 \State Set 5 - Magazine Entries
 \******************************
 S.S.5,
 
-S1,	\State 1 waits for the start command
-	#START: SHOW 5, Magazine Entries, A(7) ---> S2
+S1,    \State 1 waits for the start command
+    #START: SHOW 5, Magazine Entries, A(7) ---> S2
 
-S2,	\State 2 counts magazine entries
-	#R^Magazine: ADD A(7), R(T); SET S = X(12); SET H(S) = X(1);
-	ADD X(12); SET S = X(12); SET H(S) = -987.987;
-	SHOW 5, Magazine Entries, A(7) ---> SX
+S2,    \State 2 counts magazine entries
+    #R^Magazine: ADD A(7), R(T); SET S = X(12); SET H(S) = X(1);
+    ADD X(12); SET S = X(12); SET H(S) = -987.987;
+    SHOW 5, Magazine Entries, A(7) ---> SX
 
-	#Z^Reward: ---> S3
-	#Z^Shutdown: ---> S4
+    #Z^Reward: ---> S3
+    #Z^Shutdown: ---> S4
 
 S3,    \State 4 counts magazine entries during the timeout
-	#R^Magazine: ADD A(7), R(T), A(14), X(32); SET S = X(12); SET H(S) = X(1);
-	ADD X(12); SET S = X(12); SET H(S) = -987.987;
-	SHOW 5, Magazine Entries, A(7);
-	IF S.S.6 = 4 [@ENDTIMEOUT, @CONTINUE]
-		@ENDTIMEOUT: SET X(29) = 0, X(32) = 0; Z^EndTimeout ---> S2
-		@CONTINUE: ---> SX
+    #R^Magazine: ADD A(7), R(T), A(14), X(32); SET S = X(12); SET H(S) = X(1);
+    ADD X(12); SET S = X(12); SET H(S) = -987.987;
+    SHOW 5, Magazine Entries, A(7);
+    IF S.S.6 = 4 [@ENDTIMEOUT, @CONTINUE]
+        @ENDTIMEOUT: SET X(29) = 0, X(32) = 0; Z^EndTimeout ---> S2
+        @CONTINUE: ---> SX
 
-	#Z^EndTimeout: ---> S2
-	#Z^Shutdown: ---> S4
+    #Z^EndTimeout: ---> S2
+    #Z^Shutdown: ---> S4
 
 S4,\State 4 is a holding state
-	#START: ---> SX
+    #START: ---> SX
 
 \*****************************
 \State Set 6 - Reward delivery
@@ -914,27 +914,27 @@ S4,\State 4 is a holding state
 
 S.S.6,
 
-S1,	\State 1 waits for the start command
-	#START: SET X(3) = Z(1) * 0.001"; SHOW 4, Rewards, A(2) ---> S2
+S1,    \State 1 waits for the start command
+    #START: SET X(3) = Z(1) * 0.001"; SHOW 4, Rewards, A(2) ---> S2
 
-S2,	\State 2 waits for the ^Reward Z-Pulse
-	#Z^Reward: SET X(36) = 0; ON ^Pellet, ^MagLight; SHOW 4, Rewards, A(2) ---> S3
-	#Z^Shutdown: ---> S5
+S2,    \State 2 waits for the ^Reward Z-Pulse
+    #Z^Reward: SET X(36) = 0; ON ^Pellet, ^MagLight; SHOW 4, Rewards, A(2) ---> S3
+    #Z^Shutdown: ---> S5
 
-S3,	\State 3 waits to switch things off
-	X(3)#T: OFF ^Pellet; IF X(32) > 0 [@ENDTIMEOUT, @TIMEOUT]
-		@ENDTIMEOUT: OFF ^MagLight; IF (A(2) >= Z(2)) AND (Z(2) > 0) [@MAX, @CONTINUE]
-			@MAX: Z^Shutdown ---> S5
-			@CONTINUE: SET X(29) = 0, X(32) = 0; Z^EndTimeout ---> S2
-		@TIMEOUT: ---> S4
+S3,    \State 3 waits to switch things off
+    X(3)#T: OFF ^Pellet; IF X(32) > 0 [@ENDTIMEOUT, @TIMEOUT]
+        @ENDTIMEOUT: OFF ^MagLight; IF (A(2) >= Z(2)) AND (Z(2) > 0) [@MAX, @CONTINUE]
+            @MAX: Z^Shutdown ---> S5
+            @CONTINUE: SET X(29) = 0, X(32) = 0; Z^EndTimeout ---> S2
+        @TIMEOUT: ---> S4
 
-	#Z^Shutdown: OFF ^Pellet, ^MagLight ---> S5
+    #Z^Shutdown: OFF ^Pellet, ^MagLight ---> S5
 
-S4,	\State 4 waits until there is a magazine entry to end the timeout
-	#Z^EndTimeout: OFF ^MagLight ---> S2
+S4,    \State 4 waits until there is a magazine entry to end the timeout
+    #Z^EndTimeout: OFF ^MagLight ---> S2
 
-S5,	\State 5 is a holding state
-	#START: ---> SX
+S5,    \State 5 is a holding state
+    #START: ---> SX
 
 \****************************************
 \State Set 7 - Pre-Session Screen Updater
@@ -942,17 +942,17 @@ S5,	\State 5 is a holding state
 S.S.7,
 
 S1,\State updates the screen before session start
-	#START: SHOW 6, Session Length (s), Z(0) * 60 ---> S2
+    #START: SHOW 6, Session Length (s), Z(0) * 60 ---> S2
 
-	1": IF S.S.1 <= 2 [@SHOW, @SKIP]
-	@SHOW: SHOW 1, Session Length (min), Z(0);
-	SHOW 2, Pellet Time (s), Z(1);
-	SHOW 3, Maximum Press Interval (min), Z(9);
-	SHOW 4, Left Lever Mode, Z(5);
-	SHOW 5, Right Lever Mode, Z(6);
-	SHOW  ---> SX
+    1": IF S.S.1 <= 2 [@SHOW, @SKIP]
+    @SHOW: SHOW 1, Session Length (min), Z(0);
+    SHOW 2, Pellet Time (s), Z(1);
+    SHOW 3, Maximum Press Interval (min), Z(9);
+    SHOW 4, Left Lever Mode, Z(5);
+    SHOW 5, Right Lever Mode, Z(6);
+    SHOW  ---> SX
 
-	@SKIP: SHOW 6, Session Length (s), Z(0) * 60 ---> S2
+    @SKIP: SHOW 6, Session Length (s), Z(0) * 60 ---> S2
 
-S2,	\State 2 is a holding state 
-	#START: ---> SX
+S2,    \State 2 is a holding state
+    #START: ---> SX
